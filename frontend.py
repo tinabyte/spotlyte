@@ -78,15 +78,13 @@ if selected == "Educational":
     st_lottie(loadingbar, height=400, key = "coding3")
     url = st.text_input("Paste the URL to cut through😁")#creates box to take in the URL
     uploaded_file = st.file_uploader("or... choose a MP3 file to upload 🎵")#creating box to upload file
-
+    title = st.text_input('or... paste in the text📁')
     if uploaded_file is not None:
         audio = uploaded_file.getvalue()
         st.audio(audio)
 
 
     if url != "":
-        st.markdown("this is printing the url proving it's working: " + str(url))
-        
         selected = "Results"
         vid_id = 'Xh2TY0DMbas'
         data = yta.get_transcript(vid_id)
