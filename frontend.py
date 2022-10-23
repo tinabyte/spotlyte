@@ -1,7 +1,10 @@
 
 from cgi import test
+from cgitb import small
+from distutils.command.upload import upload
 from imp import load_source
 from json import load
+from termios import EXTA
 from turtle import color
 from urllib import request
 import streamlit as st
@@ -15,6 +18,7 @@ import pandas as pd
 from io import StringIO
 from PIL import Image
 import base64
+import pdfplumber
 
 
 
@@ -48,16 +52,19 @@ local_css("style/style.css")
 #part of the page navigation
 selected = option_menu(
     menu_title=None,
-    options = ["Home","Educational","Other compressions"],
+    options = ["Home","Educational"],
     icons=["house","book","file-earmark-lock"],
     menu_icon="cast",
     default_index= 0,
     orientation = "horizontal",
+
+    
     styles={
-            "padding": "20px",
-            "icon": {"color": "orange", "font-size": "25px"}, 
+            "padding": "0px",
+            "icon": {"color": "orange", "font-size": "30px"}, 
             "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#6c744c"},
             "nav-link-selected": {"background-color": "#6c744c"},
+
         }
     
 )
@@ -68,72 +75,88 @@ st.write("")
 #Initializing the elements
 pacmanEat = load_lottieurl("https://assets8.lottiefiles.com/packages/lf20_uhovpivr.json")
 pacmanChar = load_lottieurl("https://assets7.lottiefiles.com/packages/lf20_ctiEUT.json")
-computer = load_lottieurl("https://assets9.lottiefiles.com/packages/lf20_mbrocy0r.json")
+#computer = load_lottieurl("https://assets9.lottiefiles.com/packages/lf20_mbrocy0r.json")
 pacman = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_zBlJVT.json")
-spotlight = load_lottieurl("https://assets6.lottiefiles.com/private_files/lf30_dt51mmkh.json")
 supportingComp = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_uhovpivr.json")
 #When in the home page
+
+
 if selected == "Home":
     col1, col2, col3 = st.columns([1,1,1])
     with col1:
-        st_lottie(pacman, height=140)
+        st_lottie(pacman, height=120)
     with col2:
         st.image("testimage.png")
     with col3:
-        st_lottie(pacmanChar, height=100)
+        st_lottie(pacmanChar, height=80)
 
-    ##st.markdown("<h1 style='text-align: center; font-size: 100px; color: #f3eb0c;'> Welcome to spotlyte </h1>", unsafe_allow_html=True)    
-    st.markdown("<h1 style='text-align: center; color: white; font-weight:lighter'> A magical filter to spotlyte the important parts of a long video.\n\n\n\n</h1>", unsafe_allow_html=True)
+    col, colz, colx = st.columns([1,3,1])
+    with col:
+        st.write("")
+    with colz:
+        st.image("statement.png", width=900)
+    with colx:
+        st.write("")
+
     st.write("")
-    col1, col2, col3, col4 = st.columns([1,1,1,1])
+    col1, col2, col3, col4 = st.columns([1,3,3,1])
     with col1:
         st.markdown("")
     with col2:
-        st.markdown("<h1 style='text-align: center; font-size:30px; color: #18ccc4;'>How does spotlyte work?</h>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; font-size:30px; color: #18ccc4;'>Our function.</h>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; font-size:20px; color: white;'>Spotlyze can also be utilized for other long tedious videos like security videos. Allowing hours of review time to be reduced to mere minutes, allowing catching crime to be more efficient and effective for law enforcement. This enables for a safer community and happier life..</p>", unsafe_allow_html=True)
     with col3:
          st.markdown("<h1 style='text-align: center; font-size:30px; color: #f83c1c;'>Our mission. </h>", unsafe_allow_html=True)
          st.markdown("<p style='text-align: center; font-size:20px; color: white;'> Have you ever watched through a long lecture recording that reiterated the same information? Spotlyte filters that out for you. Utilizing our machine learning algorithm and parsing through long, tedious, lectures, it spotlytes the important parts of the video so you save time when reviewing for classes through lectures. This makes studying and reviewing easier and more convenient than ever.</p>", unsafe_allow_html=True)
     with col4:
         st.markdown("")
-    st_lottie(spotlight, height=250)
-
-
-
-
-
-
 
 
 
 def show_pdf(file_path):
-    with open(file_path,"rb") as f:
+    with open(file_path, "rb") as f:
+        st.write("below is the value of f")
+        st.write(f)
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
     pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
     st.markdown(pdf_display, unsafe_allow_html=True)
 
-    
+def extract_data(feed):
+    data = []
+    with pdfplumber.open(feed) as pdf:
+        pages = pdf.pages
+        for p in pages:
+            data.append(p.extract_tables())
+    return data
+
 #When in the educational page
 if selected == "Educational":
     st.image("smalltest2.png")
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
 
-    st.markdown("<h1 style='text-align: center;font-size: 30px; color: white;'> Paste your educational URL below to spotlyte the important parts of the lesson (ex: Zoom or YouTube).</h1>", unsafe_allow_html=True)
     
-    col1, col2, col3, col4 = st.columns([1,1,1,1])
+    col1, col2, col3, col4 = st.columns([1,4,4,1])
     with col1:
         st.write("")
     with col2:
-        st_lottie(computer, height=300, key = "coding3")
+        st.image("pacsim.png", width=530)
+        #st_lottie(computer, height=300, key = "coding3")
     with col3:
-        st_lottie(supportingComp, height=300)
+        st.markdown("<h1 style='text-align: center;font-size: 30px; color: white;'> Paste your educational URL below to spotlyte the important parts of the lesson (ex: Zoom or YouTube).</h1>", unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Upload your video", type=["mp4","mp3","docx","pdf"]) #creating box to upload file
+        userTextInput = st.text_input('or... paste in the text📁')
+        url = st.text_input("Paste the URL to cut through😁") #creates box to take in the URL
     with col4:
         st.write("")
 
-    
-    uploaded_file = st.file_uploader("Upload your video", type=["mp4","mp3","docx","pdf"]) #creating box to upload file
-    userTextInput = st.text_input('or... paste in the text📁')
-    url = st.text_input("Paste the URL to cut through😁") #creates box to take in the URL
 
+
+
+    
+    
     #When there is a file (mp3) then this code runs
     if uploaded_file is not None:
         audio = uploaded_file.getvalue() #when mp3 uploaded, it is now the audio variable
@@ -142,7 +165,19 @@ if selected == "Educational":
         #---CODE FOR API GOES HERE
         #---CODE FOR API GOES HERE
         #---CODE FOR API GOES HERE
-        show_pdf(uploaded_file)
+        with open(uploaded_file.name, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
+        
+        show_pdf(uploaded_file.name)
+
+        #show_pdf("resume.pdf")
+        #st.write(uploaded_file)
+        #st.write(extract_data(uploaded_file))
+        #show_pdf(extract_data(uploaded_file))
+
+
+
         st.markdown("<h1 style='text-align: left;font-size: 30px; color: #ffc21c;'>All of that information is now spotlyted here...</h1>", unsafe_allow_html=True)
         st.markdown("Placeholder Placeholder Place") #PLUG IN THE TEXT VARIABLE HEREEEE
 
